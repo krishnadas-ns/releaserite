@@ -1,6 +1,9 @@
-# app/models/environment.py
-from datetime import datetime
+"""
+Environment Database Model
+"""
+# pylint: disable=too-few-public-methods
 import uuid
+from datetime import datetime
 
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
@@ -10,6 +13,9 @@ from app.core.database import Base
 
 
 class EnvironmentModel(Base):
+    """
+    Environment database model.
+    """
     __tablename__ = "environments"
 
     id = Column(

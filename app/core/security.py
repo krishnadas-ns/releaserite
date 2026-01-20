@@ -1,7 +1,10 @@
+"""
+Security Utilities Module
+"""
 from datetime import datetime, timedelta, timezone
 from typing import Any, Union
 
-from jose import JWTError, jwt
+from jose import jwt
 from passlib.context import CryptContext
 
 from app.core.config import settings
@@ -13,9 +16,15 @@ pwd_context = CryptContext(
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """
+    Verify a plain password against a hashed password.
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
+    """
+    Generate a hash for a password.
+    """
     return pwd_context.hash(password)
 
 def create_access_token(
@@ -24,6 +33,9 @@ def create_access_token(
     permissions: str | None = None,
     expires_delta: Union[timedelta, None] = None,
 ) -> str:
+    """
+    Create a JWT access token.
+    """
     if expires_delta is None:
         expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -44,6 +56,9 @@ def create_access_token(
 
 
 def decode_access_token(token: str) -> dict[str, Any]:
+    """
+    Decode a JWT access token.
+    """
     payload = jwt.decode(
         token,
         settings.SECRET_KEY,
@@ -52,4 +67,7 @@ def decode_access_token(token: str) -> dict[str, Any]:
     return payload
 
 def truncate_password(password: str) -> str:
+    """
+    Truncate password (not used if using pbkdf2_sha256 which supports long passwords).
+    """
     return password[:72]

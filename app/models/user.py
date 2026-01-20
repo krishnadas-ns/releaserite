@@ -1,5 +1,9 @@
-from datetime import datetime
+"""
+User Database Model
+"""
+# pylint: disable=too-few-public-methods
 import uuid
+from datetime import datetime
 
 from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -9,6 +13,9 @@ from app.core.database import Base
 
 
 class UserModel(Base):
+    """
+    User database model.
+    """
     __tablename__ = "users"
 
     id = Column(

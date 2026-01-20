@@ -1,9 +1,17 @@
+"""
+User Pydantic Schemas
+"""
+# pylint: disable=too-few-public-methods
 from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
-
+# pylint: disable=wrong-import-position
+from app.schemas.role import Role
 
 class UserBase(BaseModel):
+    """
+    Base Model for User
+    """
     email: EmailStr = Field(..., example="admin@example.com")
     full_name: str | None = Field(default=None, example="Admin User")
     role_id: UUID | None = Field(
@@ -13,12 +21,16 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    """
+    Model for creating a user
+    """
     password: str = Field(..., min_length=8, example="StrongPassword123!")
 
 
-from app.schemas.role import Role
-
 class UserRead(UserBase):
+    """
+    Model for reading user data
+    """
     id: UUID
     is_active: bool
     created_at: datetime
@@ -26,9 +38,13 @@ class UserRead(UserBase):
     role: Role | None = None
 
     class Config:
+        """Config"""
         from_attributes = True
 
 class UserUpdate(BaseModel):
+    """
+    Model for updating user data
+    """
     email: EmailStr | None = Field(default=None, example="new.email@example.com")
     full_name: str | None = Field(default=None, example="Updated Name")
     role_id: UUID | None = Field(

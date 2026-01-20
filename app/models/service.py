@@ -1,12 +1,19 @@
+"""
+Service Database Model
+"""
+# pylint: disable=too-few-public-methods
+import uuid
+from datetime import datetime
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from datetime import datetime
-import uuid
 
 from app.core.database import Base
 
 class ServiceModel(Base):
+    """
+    Service database model.
+    """
     __tablename__ = "services"
 
     id = Column(

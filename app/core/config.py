@@ -1,13 +1,22 @@
-from pydantic_settings import BaseSettings
-from pydantic import AnyHttpUrl, field_validator
+"""
+Application Configuration Module
+"""
+# pylint: disable=too-few-public-methods
 from typing import List
+from pydantic import AnyHttpUrl, field_validator
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    """
+    Application Settings
+    """
     PROJECT_NAME: str = "ReleaseRite"
     ENVIRONMENT: str = "dev"
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"
-    ALLOWED_ORIGINS: List[AnyHttpUrl] | List[str] = ["http://localhost", "http://127.0.0.1", "http://localhost:3000"]
+    ALLOWED_ORIGINS: List[AnyHttpUrl] | List[str] = [
+        "http://localhost", "http://127.0.0.1", "http://localhost:3000"
+    ]
     DATABASE_URL: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/giq_db"
     SECRET_KEY: str = "change-this-in-prod-to-a-long-random-value"
     ALGORITHM: str = "HS256"
@@ -16,12 +25,18 @@ class Settings(BaseSettings):
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
     def split_origins(cls, v):
+        """
+        Split comma separated origins string into a list.
+        """
         # Allow comma-separated list in env var
         if isinstance(v, str):
             return [o.strip() for o in v.split(",") if o.strip()]
         return v
 
     class Config:
+        """
+        Pydantic Configuration
+        """
         env_file = ".env"
         case_sensitive = True
 

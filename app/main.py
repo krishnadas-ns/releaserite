@@ -1,9 +1,11 @@
+"""
+Main Application Module
+"""
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.v1.endpoints import service, environment, role, auth, user
+from app.api.v1.endpoints import service, environment, role, auth, user, releases
 from app.api.v1.endpoints.auth import get_current_user
-from app.api.v1.endpoints.auth import get_current_admin_user
 
 tags_metadata = [
     {
@@ -13,6 +15,10 @@ tags_metadata = [
     {
         "name": "services",
         "description": "CRUD endpoints for demo services."
+    },
+    {
+        "name": "releases",
+        "description": "Release management endpoints."
     }
 ]
 
@@ -27,9 +33,15 @@ app = FastAPI(
 )
 
 # CORS
+origins = []
+if isinstance(settings.ALLOWED_ORIGINS, list):
+    origins = [str(origin) for origin in settings.ALLOWED_ORIGINS]
+else:
+    origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[str(origin) for origin in settings.ALLOWED_ORIGINS] if isinstance(settings.ALLOWED_ORIGINS, list) else ["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,6 +50,7 @@ app.add_middleware(
 # Health endpoint
 @app.get("/health", tags=["health"])
 def health():
+    """Health check endpoint."""
     return {"status": "ok"}
 
 # API Routers (versioned)
@@ -64,7 +77,6 @@ app.include_router(
 )
 app.include_router(auth.router, prefix=settings.API_V1_STR)
 
-from app.api.v1.endpoints import releases
 app.include_router(
     releases.router,
     prefix=f"{settings.API_V1_STR}/releases",

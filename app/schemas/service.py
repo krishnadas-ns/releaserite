@@ -1,8 +1,15 @@
+"""
+Service Pydantic Schemas
+"""
+# pylint: disable=too-few-public-methods
 from datetime import datetime
 from uuid import UUID
 from pydantic import BaseModel, Field, HttpUrl
 
 class ServiceBase(BaseModel):
+    """
+    Base service schema.
+    """
     name: str = Field(..., example="Ingestion Service")
     description: str | None = Field(
         default=None,
@@ -30,7 +37,6 @@ class ServiceBase(BaseModel):
 class ServiceCreate(ServiceBase):
     """Fields required when creating a new service."""
     # Usually you don't allow client to send id / timestamps
-    pass
 
 class ServiceUpdate(BaseModel):
     """Fields allowed when updating an existing service."""
@@ -54,4 +60,5 @@ class Service(ServiceBase):
     updated_at: datetime
 
     class Config:
+        """Pydantic config."""
         from_attributes = True  # ORM -> Pydantic

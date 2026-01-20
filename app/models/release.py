@@ -1,5 +1,9 @@
-from datetime import datetime
+"""
+Release Database Models
+"""
+# pylint: disable=too-few-public-methods
 import uuid
+from datetime import datetime
 from sqlalchemy import Column, String, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -7,6 +11,9 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class ReleaseServiceLinkModel(Base):
+    """
+    Association table/model for Release <-> Service.
+    """
     __tablename__ = "release_services_link"
 
     release_id = Column(UUID(as_uuid=True), ForeignKey("releases.id"), primary_key=True)
@@ -20,6 +27,9 @@ class ReleaseServiceLinkModel(Base):
 
 
 class ReleaseModel(Base):
+    """
+    Release database model.
+    """
     __tablename__ = "releases"
 
     id = Column(
@@ -40,7 +50,7 @@ class ReleaseModel(Base):
     product_owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     qa_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     security_analyst_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    
+
     # Establish relationship to ReleaseServiceLinkModel
     service_links = relationship(
         "ReleaseServiceLinkModel",
@@ -60,6 +70,9 @@ class ReleaseModel(Base):
 
 
 class DeploymentModel(Base):
+    """
+    Deployment database model.
+    """
     __tablename__ = "deployments"
 
     id = Column(
@@ -71,7 +84,8 @@ class DeploymentModel(Base):
     )
     release_id = Column(UUID(as_uuid=True), ForeignKey("releases.id"), nullable=False)
     environment_id = Column(UUID(as_uuid=True), ForeignKey("environments.id"), nullable=False)
-    service_id = Column(UUID(as_uuid=True), ForeignKey("services.id"), nullable=True) # Nullable for release-level deployments
+    # Nullable for release-level deployments
+    service_id = Column(UUID(as_uuid=True), ForeignKey("services.id"), nullable=True)
     deployed_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     status = Column(String(50), default="success", nullable=False) # success, failed, existing, etc.
 

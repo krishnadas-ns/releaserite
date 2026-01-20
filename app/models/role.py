@@ -1,16 +1,20 @@
-# app/models/role.py
-
+"""
+Role Database Model
+"""
+# pylint: disable=too-few-public-methods
+import uuid
+from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from datetime import datetime
-from sqlalchemy.orm import relationship
-import uuid
 
 from app.core.database import Base
 
 
 class RoleModel(Base):
+    """
+    Role database model.
+    """
     __tablename__ = "roles"
 
     id = Column(
@@ -30,5 +34,3 @@ class RoleModel(Base):
         onupdate=datetime.utcnow,
         nullable=False,
     )
-
-    # (In future) users = relationship("UserModel", back_populates="role")
