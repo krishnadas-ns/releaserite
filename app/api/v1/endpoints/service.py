@@ -1,3 +1,6 @@
+"""
+Service Endpoints Module
+"""
 from uuid import UUID
 from typing import List
 
@@ -7,7 +10,6 @@ from sqlalchemy.orm import Session
 from app.schemas.service import Service, ServiceCreate, ServiceUpdate
 from app.core.database import get_db
 from app.models.service import ServiceModel
-
 from app.models.user import UserModel
 from app.api.v1.dependencies import check_permission
 
@@ -17,10 +19,12 @@ router = APIRouter(prefix="/service", tags=["service"])
 @router.get("/", response_model=List[Service], summary="List services")
 def list_services(
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(check_permission("read:services"))
+    _current_user: UserModel = Depends(check_permission("read:services"))
 ) -> List[Service]:
+    """List all services."""
     rows = db.query(ServiceModel).all()
-    return rows  # thanks to from_attributes=True, FastAPI converts ORM -> Pydantic
+    # thanks to from_attributes=True, FastAPI converts ORM -> Pydantic
+    return rows
 
 
 @router.post(
@@ -32,8 +36,9 @@ def list_services(
 def create_service(
     payload: ServiceCreate,
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(check_permission("create:services"))
+    _current_user: UserModel = Depends(check_permission("create:services"))
 ) -> Service:
+    """Create a new service."""
     row = ServiceModel(
         name=payload.name,
         description=payload.description,
@@ -52,8 +57,9 @@ def create_service(
 def get_service(
     service_id: UUID,
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(check_permission("read:services"))
+    _current_user: UserModel = Depends(check_permission("read:services"))
 ) -> Service:
+    """Get a service by ID."""
     row = (
         db.query(ServiceModel)
         .filter(ServiceModel.id == service_id)
@@ -69,8 +75,9 @@ def update_service(
     service_id: UUID,
     payload: ServiceUpdate,
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(check_permission("create:services"))
+    _current_user: UserModel = Depends(check_permission("create:services"))
 ) -> Service:
+    """Update a service."""
     row = (
         db.query(ServiceModel)
         .filter(ServiceModel.id == service_id)
@@ -99,8 +106,9 @@ def update_service(
 def delete_service(
     service_id: UUID,
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(check_permission("create:services"))
+    _current_user: UserModel = Depends(check_permission("create:services"))
 ):
+    """Delete a service."""
     row = (
         db.query(ServiceModel)
         .filter(ServiceModel.id == service_id)
@@ -111,4 +119,3 @@ def delete_service(
 
     db.delete(row)
     db.commit()
-    return None

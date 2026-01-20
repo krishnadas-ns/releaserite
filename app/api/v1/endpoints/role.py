@@ -1,9 +1,13 @@
+"""
+Role Endpoints Module
+"""
 # app/api/v1/endpoints/role.py
+
+from typing import List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from uuid import UUID
-from typing import List
 
 from app.core.database import get_db
 from app.models.role import RoleModel
@@ -14,11 +18,13 @@ router = APIRouter(prefix="/roles", tags=["roles"])
 
 @router.get("/", response_model=List[Role])
 def list_roles(db: Session = Depends(get_db)):
+    """List all roles"""
     return db.query(RoleModel).order_by(RoleModel.name).all()
 
 
 @router.post("/", response_model=Role, status_code=status.HTTP_201_CREATED)
 def create_role(payload: RoleCreate, db: Session = Depends(get_db)):
+    """Create a new role"""
     existing = (
         db.query(RoleModel)
         .filter(RoleModel.name == payload.name)
@@ -42,6 +48,7 @@ def create_role(payload: RoleCreate, db: Session = Depends(get_db)):
 
 @router.get("/{role_id}", response_model=Role)
 def get_role(role_id: UUID, db: Session = Depends(get_db)):
+    """Get a role by ID"""
     role = db.query(RoleModel).filter(RoleModel.id == role_id).first()
     if not role:
         raise HTTPException(404, "Role not found")
@@ -50,6 +57,7 @@ def get_role(role_id: UUID, db: Session = Depends(get_db)):
 
 @router.patch("/{role_id}", response_model=Role)
 def update_role(role_id: UUID, payload: RoleUpdate, db: Session = Depends(get_db)):
+    """Update a role"""
     role = db.query(RoleModel).filter(RoleModel.id == role_id).first()
     if not role:
         raise HTTPException(404, "Role not found")
@@ -71,10 +79,10 @@ def update_role(role_id: UUID, payload: RoleUpdate, db: Session = Depends(get_db
 
 @router.delete("/{role_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_role(role_id: UUID, db: Session = Depends(get_db)):
+    """Delete a role"""
     role = db.query(RoleModel).filter(RoleModel.id == role_id).first()
     if not role:
         raise HTTPException(404, "Role not found")
 
     db.delete(role)
     db.commit()
-    return None

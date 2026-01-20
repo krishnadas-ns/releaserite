@@ -1,3 +1,6 @@
+"""
+User Endpoints Module
+"""
 # app/api/v1/endpoints/user.py
 
 from uuid import UUID
@@ -12,6 +15,7 @@ from app.models.user import UserModel
 from app.models.role import RoleModel
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.api.v1.endpoints.auth import get_current_admin_user
+from app.api.v1.dependencies import check_permission
 
 router = APIRouter(
     prefix="/users",
@@ -19,13 +23,12 @@ router = APIRouter(
 )
 
 
-from app.api.v1.dependencies import check_permission
-
 @router.get("/", response_model=List[UserRead], summary="List users")
 def list_users(
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(check_permission("read:users")),
+    _current_user: UserModel = Depends(check_permission("read:users")),
 ) -> List[UserRead]:
+    """List all users."""
     return db.query(UserModel).order_by(UserModel.email).all()
 
 
@@ -38,8 +41,9 @@ def list_users(
 def create_user(
     payload: UserCreate,
     db: Session = Depends(get_db),
-    current_admin: Annotated[UserModel, Depends(get_current_admin_user)] = None,
+    _current_admin: Annotated[UserModel, Depends(get_current_admin_user)] = None,
 ) -> UserRead:
+    """Create a new user."""
     # Ensure email is unique
     existing = (
         db.query(UserModel)
@@ -83,8 +87,9 @@ def create_user(
 def get_user(
     user_id: UUID,
     db: Session = Depends(get_db),
-    current_admin: Annotated[UserModel, Depends(get_current_admin_user)] = None,
+    _current_admin: Annotated[UserModel, Depends(get_current_admin_user)] = None,
 ) -> UserRead:
+    """Get a user by ID."""
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(
@@ -103,8 +108,9 @@ def update_user(
     user_id: UUID,
     payload: UserUpdate,
     db: Session = Depends(get_db),
-    current_admin: Annotated[UserModel, Depends(get_current_admin_user)] = None,
+    _current_admin: Annotated[UserModel, Depends(get_current_admin_user)] = None,
 ) -> UserRead:
+    """Update a user."""
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(
@@ -164,6 +170,7 @@ def delete_user(
     db: Session = Depends(get_db),
     current_admin: Annotated[UserModel, Depends(get_current_admin_user)] = None,
 ) -> None:
+    """Delete a user."""
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(
@@ -180,4 +187,3 @@ def delete_user(
 
     db.delete(user)
     db.commit()
-    return None
