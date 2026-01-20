@@ -2,6 +2,7 @@
 Database Initialization Script
 """
 # pylint: disable=wrong-import-position
+# pylint: disable=duplicate-code
 import os
 import sys
 
