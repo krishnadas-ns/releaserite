@@ -2,6 +2,7 @@
 Authentication Schemas
 """
 # pylint: disable=too-few-public-methods
+from typing import Optional
 from pydantic import BaseModel
 
 class Token(BaseModel):
@@ -11,4 +12,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     """Token data schema."""
-    sub: str | None = None  # subject (email)
+    sub: Optional[str] = None  # subject (email)

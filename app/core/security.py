@@ -2,7 +2,7 @@
 Security Utilities Module
 """
 from datetime import datetime, timedelta, timezone
-from typing import Any, Union
+from typing import Any, Union, Optional
 
 from jose import jwt
 from passlib.context import CryptContext
@@ -29,8 +29,8 @@ def get_password_hash(password: str) -> str:
 
 def create_access_token(
     subject: str,
-    role: str | None = None,
-    permissions: str | None = None,
+    role: Optional[str] = None,
+    permissions: Optional[str] = None,
     expires_delta: Union[timedelta, None] = None,
 ) -> str:
     """

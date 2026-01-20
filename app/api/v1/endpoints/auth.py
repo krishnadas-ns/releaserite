@@ -1,7 +1,7 @@
 """
 Authentication Endpoints Module
 """
-from typing import Annotated
+from typing import Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -28,14 +28,14 @@ router = APIRouter(
 )
 
 
-def get_user_by_email(db: Session, email: str) -> UserModel | None:
+def get_user_by_email(db: Session, email: str) -> Optional[UserModel]:
     """
     Retrieve a user by email from the database.
     """
     return db.query(UserModel).filter(UserModel.email == email).first()
 
 
-def authenticate_user(db: Session, email: str, password: str) -> UserModel | None:
+def authenticate_user(db: Session, email: str, password: str) -> Optional[UserModel]:
     """
     Authenticate a user by checking email and password.
     """
@@ -64,7 +64,7 @@ async def get_current_user(
 
     try:
         payload = decode_access_token(token)
-        email: str | None = payload.get("sub")
+        email: Optional[str] = payload.get("sub")
         if email is None:
             raise credentials_exception
     except JWTError as exc:

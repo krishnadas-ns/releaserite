@@ -4,17 +4,18 @@ Role Pydantic Schemas
 # pylint: disable=too-few-public-methods
 from uuid import UUID
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
 class RoleBase(BaseModel):
     """Base Role Schema."""
     name: str = Field(..., example="release_manager")
-    description: str | None = Field(
+    description: Optional[str] = Field(
         default=None,
         example="Responsible for managing and approving releases",
     )
-    permissions: str | None = Field(
+    permissions: Optional[str] = Field(
         default=None,
         example="read:releases,write:releases",
         description="Comma-separated list of permissions"
@@ -27,8 +28,8 @@ class RoleCreate(RoleBase):
 
 class RoleUpdate(BaseModel):
     """Schema for updating a Role."""
-    name: str | None = Field(default=None)
-    description: str | None = Field(default=None)
+    name: Optional[str] = Field(default=None)
+    description: Optional[str] = Field(default=None)
 
 
 class Role(RoleBase):

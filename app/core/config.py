@@ -2,7 +2,7 @@
 Application Configuration Module
 """
 # pylint: disable=too-few-public-methods
-from typing import List
+from typing import List, Union
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings
 
@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "dev"
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"
-    ALLOWED_ORIGINS: List[AnyHttpUrl] | List[str] = [
+    ALLOWED_ORIGINS: Union[List[AnyHttpUrl], List[str]] = [
         "http://localhost", "http://127.0.0.1", "http://localhost:3000"
     ]
     DATABASE_URL: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/giq_db"

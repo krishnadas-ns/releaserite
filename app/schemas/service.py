@@ -4,6 +4,7 @@ Service Pydantic Schemas
 # pylint: disable=too-few-public-methods
 from datetime import datetime
 from uuid import UUID
+from typing import Optional
 from pydantic import BaseModel, Field, HttpUrl
 
 class ServiceBase(BaseModel):
@@ -11,24 +12,24 @@ class ServiceBase(BaseModel):
     Base service schema.
     """
     name: str = Field(..., example="Ingestion Service")
-    description: str | None = Field(
+    description: Optional[str] = Field(
         default=None,
         example="Handles data ingestion from external sources",
     )
-    owner: str | None = Field(
+    owner: Optional[str] = Field(
         default=None,
         example="data-platform-team",
     )
-    environment_id: UUID | None = Field(
+    environment_id: Optional[UUID] = Field(
         default=None,
         example="3fa85f64-5717-4562-b3fc-2c963f66afa6",
         description="ID of the environment this service belongs to.",
     )
-    status: str | None = Field(
+    status: Optional[str] = Field(
         default="active",
         example="active",
     )
-    repo_link: HttpUrl | None = Field(
+    repo_link: Optional[HttpUrl] = Field(
         default=None,
         example="https://gitlab.com/org/project",
         description="Link to the repo for this service.",
@@ -40,15 +41,15 @@ class ServiceCreate(ServiceBase):
 
 class ServiceUpdate(BaseModel):
     """Fields allowed when updating an existing service."""
-    name: str | None = Field(default=None, example="Updated service name")
-    description: str | None = Field(default=None, example="Updated description")
-    owner: str | None = Field(default=None, example="updated-owner")
-    environment_id: UUID | None = Field(
+    name: Optional[str] = Field(default=None, example="Updated service name")
+    description: Optional[str] = Field(default=None, example="Updated description")
+    owner: Optional[str] = Field(default=None, example="updated-owner")
+    environment_id: Optional[UUID] = Field(
         default=None,
         example="3fa85f64-5717-4562-b3fc-2c963f66afa6",
     )
-    status: str | None = Field(default=None, example="deprecated")
-    repo_link: HttpUrl | None = Field(
+    status: Optional[str] = Field(default=None, example="deprecated")
+    repo_link: Optional[HttpUrl] = Field(
         default=None,
         example="https://gitlab.com/org/project",
     )
