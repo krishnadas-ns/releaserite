@@ -4,13 +4,12 @@ Migration script to add 'service_id' to `deployments` table.
 # pylint: disable=wrong-import-position
 import sys
 import os
-# pylint: disable=import-error
-from sqlalchemy import create_engine, text
 
 # Add parent dir to path to find app module if needed,
 # but for raw sql migration we just need connection.
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from sqlalchemy import create_engine, text
 from app.core.config import settings
 
 def migrate():

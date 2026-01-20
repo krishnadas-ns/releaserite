@@ -1,13 +1,13 @@
 """
 Script to reset the admin user's password.
 """
+# pylint: disable=wrong-import-position
 import sys
 import os
 
 # Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# pylint: disable=wrong-import-position
 from app.core.database import SessionLocal
 from app.models.user import UserModel
 from app.core.security import get_password_hash

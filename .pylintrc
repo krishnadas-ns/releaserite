@@ -1,0 +1,9 @@
+[MASTER]
+ignore=venv,node_modules,.git,__pycache__,alembic
+ignore-patterns=venv,node_modules
+
+[MESSAGES CONTROL]
+# Disable C0103 (invalid-name) for pydantic/sqlalchemy specific patterns if needed,
+# but generally we fix them.
+# Disable R0801 (duplicate-code) globally if desired, but we keep it enabled to catch issues.
+# We disable it for specific blocks if necessary.
