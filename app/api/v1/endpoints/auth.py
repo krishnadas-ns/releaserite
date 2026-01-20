@@ -1,18 +1,20 @@
+"""
+Authentication Endpoints Module
+"""
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from jose import JWTError
 
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.security import (
     verify_password,
-    get_password_hash,
     create_access_token,
     decode_access_token,
 )
 from app.models.user import UserModel
-from app.models.role import RoleModel
 from app.schemas.auth import Token
 from app.schemas.user import UserRead
 
@@ -27,10 +29,16 @@ router = APIRouter(
 
 
 def get_user_by_email(db: Session, email: str) -> UserModel | None:
+    """
+    Retrieve a user by email from the database.
+    """
     return db.query(UserModel).filter(UserModel.email == email).first()
 
 
 def authenticate_user(db: Session, email: str, password: str) -> UserModel | None:
+    """
+    Authenticate a user by checking email and password.
+    """
     user = get_user_by_email(db, email=email)
     if not user:
         return None
@@ -41,14 +49,13 @@ def authenticate_user(db: Session, email: str, password: str) -> UserModel | Non
     return user
 
 
-
-    
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     db: Session = Depends(get_db),
 ) -> UserModel:
-    from jose import JWTError
-
+    """
+    Dependency to get the current authenticated user from the JWT token.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials.",
@@ -60,8 +67,8 @@ async def get_current_user(
         email: str | None = payload.get("sub")
         if email is None:
             raise credentials_exception
-    except JWTError:
-        raise credentials_exception
+    except JWTError as exc:
+        raise credentials_exception from exc
 
     user = get_user_by_email(db, email=email)
     if user is None:
@@ -71,6 +78,9 @@ async def get_current_user(
 async def get_current_admin_user(
     current_user: Annotated[UserModel, Depends(get_current_user)],
 ) -> UserModel:
+    """
+    Dependency to ensure the current user is an admin.
+    """
     # Assumes UserModel.role relationship is loaded
     if not current_user.role or current_user.role.name != "admin":
         raise HTTPException(
@@ -84,6 +94,9 @@ async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db),
 ) -> Token:
+    """
+    Login endpoint to authenticate users and Issue JWT tokens.
+    """
     # We treat "username" field as email
     user = authenticate_user(db, email=form_data.username, password=form_data.password)
     if not user:
@@ -107,4 +120,7 @@ async def login(
 async def read_current_user(
     current_user: Annotated[UserModel, Depends(get_current_user)],
 ) -> UserRead:
+    """
+    Get details of the currently authenticated user.
+    """
     return current_user
