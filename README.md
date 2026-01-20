@@ -1,6 +1,6 @@
-# FastAPI Starter
+# ReleaseRite
 
-A minimal, production-friendly FastAPI layout with versioned routes and Swagger UI enabled.
+A minimal, production-friendly tool used for managing releases of services.
 
 ## Quickstart
 
