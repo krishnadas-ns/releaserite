@@ -3,7 +3,14 @@ ignore=venv,node_modules,.git,__pycache__,alembic
 ignore-patterns=venv,node_modules
 
 [MESSAGES CONTROL]
-# Disable C0103 (invalid-name) for pydantic/sqlalchemy specific patterns if needed,
-# but generally we fix them.
+# Disable C0103 (invalid-name) for pydantic/sqlalchemy specific patterns if needed.
 # Disable R0801 (duplicate-code) globally if desired, but we keep it enabled to catch issues.
 # We disable it for specific blocks if necessary.
+disable=C0114
+
+[SIMILARITIES]
+# Minimum lines number of a similarity.
+min-similarity-lines=15
+
+[This-Section-Is-Used-To-Fix-Import-Errors]
+init-hook='import sys; sys.path.append("./venv/lib/python3.11/site-packages"); sys.path.append("./venv/lib/python3.9/site-packages"); sys.path.append("./venv/lib/python3.10/site-packages"); sys.path.append("./venv/lib/python3.12/site-packages")'

@@ -1,4 +1,6 @@
-# app/api/v1/endpoints/environment.py
+"""
+API endpoints for managing environments.
+"""
 
 from uuid import UUID
 from typing import List
@@ -23,6 +25,7 @@ router = APIRouter(
 
 @router.get("/", response_model=List[Environment], summary="List environments")
 def list_environments(db: Session = Depends(get_db)) -> List[Environment]:
+    """List all environments."""
     return db.query(EnvironmentModel).order_by(EnvironmentModel.name).all()
 
 
@@ -36,6 +39,7 @@ def create_environment(
     payload: EnvironmentCreate,
     db: Session = Depends(get_db),
 ) -> Environment:
+    """Create a new environment."""
     # Enforce unique name
     existing = (
         db.query(EnvironmentModel)
@@ -67,6 +71,7 @@ def get_environment(
     environment_id: UUID,
     db: Session = Depends(get_db),
 ) -> Environment:
+    """Get specific environment by ID."""
     env = (
         db.query(EnvironmentModel)
         .filter(EnvironmentModel.id == environment_id)
@@ -90,6 +95,7 @@ def update_environment(
     payload: EnvironmentUpdate,
     db: Session = Depends(get_db),
 ) -> Environment:
+    """Update environment details."""
     env = (
         db.query(EnvironmentModel)
         .filter(EnvironmentModel.id == environment_id)
@@ -133,6 +139,7 @@ def delete_environment(
     environment_id: UUID,
     db: Session = Depends(get_db),
 ) -> None:
+    """Delete environment if unused."""
     env = (
         db.query(EnvironmentModel)
         .filter(EnvironmentModel.id == environment_id)
@@ -158,4 +165,3 @@ def delete_environment(
 
     db.delete(env)
     db.commit()
-    return None
