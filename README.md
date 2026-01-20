@@ -29,21 +29,52 @@ uvicorn app.main:app --reload
 
 ## Project Structure
 ```
-fastapi-starter/
+release-manager/
+├── .github/
+│   └── workflows/
+│       └── pylint.yml
 ├── app/
 │   ├── api/
 │   │   └── v1/
-│   │       └── endpoints/
-│   │           └── items.py
+│   │       ├── endpoints/
+│   │       │   ├── auth.py
+│   │       │   ├── environment.py
+│   │       │   ├── releases.py
+│   │       │   ├── role.py
+│   │       │   ├── service.py
+│   │       │   └── user.py
+│   │       └── dependencies.py
 │   ├── core/
-│   │   └── config.py
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   └── security.py
+│   ├── models/
 │   ├── schemas/
-│   │   └── item.py
 │   └── main.py
+├── scripts/
+│   ├── init_db.py
+│   ├── migrate_deployments.py
+│   ├── migrate_release_columns.py
+│   ├── migrate_service_version.py
+│   ├── recreate_tables.py
+│   ├── reset_admin.py
+│   ├── seed_users.py
+│   └── update_roles.py
 ├── tests/
 │   └── test_health.py
-├── .env.example
+├── ui/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   ├── lib/
+│   │   └── types/
+│   ├── public/
+│   ├── package.json
+│   └── tsconfig.json
+├── .pylintrc
+├── docker-compose.yaml
 ├── requirements.txt
+├── start_app.sh
 └── README.md
 ```
 
