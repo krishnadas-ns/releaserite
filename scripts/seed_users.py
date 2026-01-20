@@ -1,4 +1,7 @@
-
+"""
+Script to seed default users into the database.
+"""
+# pylint: disable=wrong-import-position
 import os
 import sys
 
@@ -14,6 +17,7 @@ from app.models.role import RoleModel
 from app.core.security import get_password_hash
 
 def seed_users():
+    """Seed users from configuration."""
     db = SessionLocal()
     try:
         users_config = [
@@ -50,11 +54,11 @@ def seed_users():
                     role_id=role.id
                 )
                 db.add(user)
-        
+
         db.commit()
         print("Users seeded successfully.")
 
-    except Exception as e:
+    except Exception as e: # pylint: disable=broad-exception-caught
         print(f"Error seeding users: {e}")
         db.rollback()
     finally:

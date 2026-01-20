@@ -1,15 +1,9 @@
-# scripts/init_db.py
+"""
+Database Initialization Script
+"""
+# pylint: disable=wrong-import-position
 import os
 import sys
-
-from app.core.database import Base, engine, SessionLocal
-from app.models.service import ServiceModel  # make sure this exists
-from app.models.environment import EnvironmentModel
-from app.models.role import RoleModel
-from app.models.user import UserModel
-from app.models.release import ReleaseModel, DeploymentModel
-from app.core.security import get_password_hash
-
 
 # Add project root (parent of "scripts") to sys.path
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -17,7 +11,17 @@ PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
+from app.core.database import Base, engine, SessionLocal
+from app.models.service import ServiceModel # pylint: disable=unused-import
+from app.models.environment import EnvironmentModel # pylint: disable=unused-import
+from app.models.role import RoleModel
+from app.models.user import UserModel
+from app.models.release import ReleaseModel, DeploymentModel # pylint: disable=unused-import
+from app.core.security import get_password_hash
+
+
 def seed_admin_role():
+    """Seed the admin role if it doesn't exist."""
     db = SessionLocal()
     try:
         existing = db.query(RoleModel).filter(RoleModel.name == "admin").first()
@@ -32,6 +36,7 @@ def seed_admin_role():
         db.close()
 
 def seed_roles_and_users():
+    """Seed default roles and users."""
     db = SessionLocal()
     try:
         # Define Roles and Permissions
@@ -44,7 +49,11 @@ def seed_roles_and_users():
             {
                 "name": "release_manager",
                 "description": "Can manage releases and services.",
-                "permissions": "read:releases,create:releases,update:releases,delete:releases,read:services,create:services,update:services,delete:services,read:users"
+                "permissions": (
+                    "read:releases,create:releases,update:releases,delete:releases,"
+                    "read:services,create:services,update:services,delete:services,"
+                    "read:users"
+                )
             },
             {
                 "name": "product_owner",
@@ -66,7 +75,9 @@ def seed_roles_and_users():
         # Create Roles
         created_roles = {}
         for r_data in roles_data:
-            role = db.query(RoleModel).filter(RoleModel.name == r_data["name"]).first()
+            role = db.query(RoleModel)\
+                .filter(RoleModel.name == r_data["name"])\
+                .first()
             if not role:
                 role = RoleModel(
                     name=r_data["name"],
@@ -86,11 +97,36 @@ def seed_roles_and_users():
 
         # Define Users
         users_data = [
-            {"email": "admin@example.com", "name": "Admin User", "role": "admin", "password": "Admin123!"},
-            {"email": "rm@example.com", "name": "ReleaseRite Admin", "role": "release_manager", "password": "password"},
-            {"email": "po@example.com", "name": "Product Owner", "role": "product_owner", "password": "password"},
-            {"email": "qa@example.com", "name": "QA Engineer", "role": "qa_engineer", "password": "password"},
-            {"email": "sec@example.com", "name": "Security Analyst", "role": "security_analyst", "password": "password"},
+            {
+                "email": "admin@example.com",
+                "name": "Admin User",
+                "role": "admin",
+                "password": "Admin123!"
+            },
+            {
+                "email": "rm@example.com",
+                "name": "ReleaseRite Admin",
+                "role": "release_manager",
+                "password": "password"
+            },
+            {
+                "email": "po@example.com",
+                "name": "Product Owner",
+                "role": "product_owner",
+                "password": "password"
+            },
+            {
+                "email": "qa@example.com",
+                "name": "QA Engineer",
+                "role": "qa_engineer",
+                "password": "password"
+            },
+            {
+                "email": "sec@example.com",
+                "name": "Security Analyst",
+                "role": "security_analyst",
+                "password": "password"
+            },
         ]
 
         # Create Users
@@ -118,6 +154,7 @@ def seed_roles_and_users():
         db.close()
 
 def main():
+    """Main function to initialize database."""
     Base.metadata.create_all(bind=engine)
     seed_roles_and_users()  # ensure roles and users exist
 

@@ -1,4 +1,7 @@
-
+"""
+Script to update role permissions in the database.
+"""
+# pylint: disable=wrong-import-position
 import os
 import sys
 
@@ -12,14 +15,24 @@ from app.core.database import SessionLocal
 from app.models.role import RoleModel
 
 def update_roles():
+    """Update roles with defined permissions."""
     db = SessionLocal()
     try:
         roles_config = {
             "admin": "*",
-            "product_owner": "read:environments,read:services,read:dashboard,read:releases",
-            "qa_engineer": "read:environments,read:services,read:dashboard,read:releases",
-            "release_manager": "read:environments,read:services,create:services,read:releases,create:releases,read:dashboard",
-            "security_analyst": "read:environments,read:services,read:dashboard,read:releases"
+            "product_owner": (
+                "read:environments,read:services,read:dashboard,read:releases"
+            ),
+            "qa_engineer": (
+                "read:environments,read:services,read:dashboard,read:releases"
+            ),
+            "release_manager": (
+                "read:environments,read:services,create:services,"
+                "read:releases,create:releases,read:dashboard"
+            ),
+            "security_analyst": (
+                "read:environments,read:services,read:dashboard,read:releases"
+            )
         }
 
         for role_name, permissions in roles_config.items():
@@ -31,10 +44,10 @@ def update_roles():
                 print(f"Role {role_name} not found, creating it.")
                 role = RoleModel(name=role_name, permissions=permissions)
                 db.add(role)
-        
+
         db.commit()
         print("Roles updated successfully.")
-    except Exception as e:
+    except Exception as e: # pylint: disable=broad-exception-caught
         print(f"Error updating roles: {e}")
         db.rollback()
     finally:
