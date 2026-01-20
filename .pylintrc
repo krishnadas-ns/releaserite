@@ -13,7 +13,6 @@ disable=C0114
 min-similarity-lines=15
 
 [This-Section-Is-Used-To-Fix-Import-Errors]
-# We use os.getcwd() to make sure we find the venv relative to the project root,
-# regardless of where pylint is invoked (assuming it's invoked from near the root or we find it).
-# We also add the current directory to sys.path to ensure 'app' is importable.
-init-hook='import sys, os; cwd = os.getcwd(); sys.path.append(cwd); venv_site = os.path.join(cwd, "venv/lib/python3.11/site-packages"); sys.path.append(venv_site) if os.path.exists(venv_site) else None'
+# Standard way to ensure local modules are found.
+# For site-packages, we rely on running pylint via 'python -m pylint' from the venv.
+init-hook='import sys; sys.path.append(".")'
